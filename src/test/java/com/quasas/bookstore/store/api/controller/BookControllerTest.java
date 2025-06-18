@@ -37,4 +37,10 @@ class BookControllerTest {
         mockMvc.perform(get("/api/books"))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void getAll_shouldReturn403_whenNotAuthenticated() throws Exception {
+        mockMvc.perform(get("/api/books"))
+                .andExpect(status().isForbidden());
+    }
 }
