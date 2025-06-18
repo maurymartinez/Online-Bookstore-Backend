@@ -111,4 +111,20 @@ class AuthServiceTest {
                 () -> authService.login(email.value(), password));
         assertEquals("Invalid credentials", ex.getMessage());
     }
+
+    @Test
+    void login_shouldFail_whenPasswordDoesNotMatch() {
+        String password = "rawPassword";
+        String hashedPassword = "$2a$10$abcdefghijklmnopqrstuvwxabcdefghijklmnopqrstuvwx123456";
+        Email email = new Email("user@example.com");
+
+        User user = new User(UUID.randomUUID(), email, "Test User", new PasswordHash(hashedPassword));
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(password, hashedPassword)).thenReturn(false);
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> authService.login(email.value(), password));
+        assertEquals("Invalid credentials", ex.getMessage());
+    }
 }
