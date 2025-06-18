@@ -2,14 +2,12 @@ package com.quasas.bookstore.security.application.service;
 
 import com.quasas.bookstore.security.domain.UserRepository;
 import com.quasas.bookstore.security.domain.valueobject.Email;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AuthServiceTest {
 
@@ -42,5 +40,17 @@ class AuthServiceTest {
                         user.getName().equals(name) &&
                         user.getPassword().value().equals(hashedPassword)
         ));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenEmailIsInvalid() {
+        String invalidEmail = "not-an-email";
+        String password = "123456";
+        String name = "Invalid";
+
+        Assertions.assertThrows(IllegalArgumentException.class, () ->
+                authService.register(invalidEmail, password, name));
+
+        verifyNoInteractions(userRepository);
     }
 }
