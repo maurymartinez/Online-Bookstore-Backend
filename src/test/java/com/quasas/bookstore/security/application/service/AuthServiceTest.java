@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
@@ -95,5 +96,19 @@ class AuthServiceTest {
         when(passwordEncoder.matches(password, hashedPassword)).thenReturn(true);
 
         assertDoesNotThrow(() -> authService.login(email.value(), password));
+    }
+
+
+
+    @Test
+    void login_shouldFail_whenEmailNotFound() {
+        String password = "rawPassword";
+        Email email = new Email("user@example.com");
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> authService.login(email.value(), password));
+        assertEquals("Invalid credentials", ex.getMessage());
     }
 }
