@@ -18,10 +18,10 @@ public class JpaUserRepository implements UserRepository {
     @Override
     public void save(User user) {
         UserEntity entity = UserEntity.builder()
-                .id(user.getId())
-                .email(user.getEmail().value())
-                .name(user.getName())
-                .password(user.getPassword().value())
+                .id(user.id())
+                .email(user.email().value())
+                .name(user.name())
+                .password(user.password().value())
                 .build();
 
         repository.save(entity);
