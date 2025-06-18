@@ -51,9 +51,9 @@ class AuthServiceTest {
 
         verify(userRepository).save(argThat(
                 user ->
-                        user.getEmail().value().equals(email) &&
-                        user.getName().equals(name) &&
-                        user.getPassword().value().equals(hashedPassword)
+                        user.email().value().equals(email) &&
+                        user.name().equals(name) &&
+                        user.password().value().equals(hashedPassword)
         ));
     }
 

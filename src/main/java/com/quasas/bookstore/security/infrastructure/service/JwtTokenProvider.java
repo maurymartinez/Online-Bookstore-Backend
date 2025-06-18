@@ -25,8 +25,8 @@ public class JwtTokenProvider implements JwtService {
         Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
         return Jwts.builder()
-                .subject(user.getEmail().value())
-                .claim("userId", user.getId().toString())
+                .subject(user.email().value())
+                .claim("userId", user.id().toString())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key)
