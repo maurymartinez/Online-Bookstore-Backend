@@ -12,6 +12,6 @@ public class BookService {
     private final BookRepository bookRepository;
 
     public List<Book> getBooks() {
-        throw new UnsupportedOperationException("no implemented yet");
+        return bookRepository.findAll();
     }
 }
