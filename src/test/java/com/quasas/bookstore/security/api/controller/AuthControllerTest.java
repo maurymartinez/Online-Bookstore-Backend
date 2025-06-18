@@ -105,4 +105,17 @@ class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").value(expectedToken));
     }
+
+    @Test
+    void login_returnsUnauthorized_whenCredentialsAreInvalid() throws Exception {
+        LoginRequest request = new LoginRequest("user@example.com", "wrongpass");
+
+        when(authService.login(request.email(), request.password()))
+                .thenThrow(new IllegalArgumentException("Invalid credentials"));
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
 }
