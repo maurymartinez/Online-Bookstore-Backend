@@ -4,4 +4,5 @@ import com.quasas.bookstore.security.domain.User;
 
 public interface JwtService {
     String generateToken(User user);
+    String extractUsername(String token);
 }
