@@ -35,6 +35,14 @@ public class AuthService {
     }
 
     public String login(String email, String password) {
-        throw new UnsupportedOperationException("not yet implemented");
+        Email userEmail = new Email(email);
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
+
+        if (!user.verifyPassword(password, passwordEncoder::matches)) {
+            throw new IllegalArgumentException("Invalid credentials");
+        }
+
+        return jwtService.generateToken(user);
     }
 }
