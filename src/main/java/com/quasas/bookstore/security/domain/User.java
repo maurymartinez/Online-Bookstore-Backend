@@ -16,4 +16,11 @@ public class User {
     private final String name;
     private final PasswordHash password;
 
+    public boolean verifyPassword(String rawPassword, PasswordVerifier verifier) {
+        return verifier.verify(rawPassword, password.value());
+    }
+
+    public interface PasswordVerifier {
+        boolean verify(String rawPassword, String hashed);
+    }
 }
