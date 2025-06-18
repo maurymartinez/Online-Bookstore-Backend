@@ -2,6 +2,7 @@ package com.quasas.bookstore.security.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quasas.bookstore.TestSecurityConfig;
+import com.quasas.bookstore.security.api.dto.LoginRequest;
 import com.quasas.bookstore.security.api.dto.RegisterRequest;
 import com.quasas.bookstore.security.application.service.AuthService;
 import org.junit.jupiter.api.Test;
@@ -13,13 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
 @Import(TestSecurityConfig.class)
@@ -92,5 +89,20 @@ class AuthControllerTest {
                 .andExpect(content().string(containsString("Email is required")))
                 .andExpect(content().string(containsString("Password must be at least 6 characters")))
                 .andExpect(content().string(containsString("Name is required")));
+    }
+
+    @Test
+    void login_returnsToken_whenCredentialsAreValid() throws Exception {
+        LoginRequest request = new LoginRequest("user@example.com", "password123");
+        String expectedToken = "mocked.jwt.token";
+
+        when(authService.login(request.email(), request.password()))
+                .thenReturn(expectedToken);
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.access_token").value(expectedToken));
     }
 }
