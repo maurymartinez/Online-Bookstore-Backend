@@ -90,7 +90,7 @@ class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString("Email is required")))
-                .andExpect(content().string(containsString("Password is required")))
+                .andExpect(content().string(containsString("Password must be at least 6 characters")))
                 .andExpect(content().string(containsString("Name is required")));
     }
 }
