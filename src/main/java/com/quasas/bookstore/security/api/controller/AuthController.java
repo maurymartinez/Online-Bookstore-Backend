@@ -2,6 +2,7 @@ package com.quasas.bookstore.security.api.controller;
 
 import com.quasas.bookstore.security.api.dto.RegisterRequest;
 import com.quasas.bookstore.security.application.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -20,7 +21,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
         authService.register(request.email(), request.password(), request.name());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
