@@ -2,12 +2,18 @@ package com.quasas.bookstore.security.application.service;
 
 import com.quasas.bookstore.security.domain.UserRepository;
 import com.quasas.bookstore.security.domain.valueobject.Email;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 class AuthServiceTest {
 
@@ -48,9 +54,24 @@ class AuthServiceTest {
         String password = "123456";
         String name = "Invalid";
 
-        Assertions.assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 authService.register(invalidEmail, password, name));
 
         verifyNoInteractions(userRepository);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenEmailAlreadyExists() {
+        String email = "duplicate@example.com";
+        String password = "password123";
+        String name = "Duplicate";
+
+        when(userRepository.existsByEmail(new Email(email))).thenReturn(true);
+
+        assertThrows(IllegalArgumentException.class, () ->
+                authService.register(email, password, name));
+
+        verify(userRepository, never()).save(any());
+        verify(passwordEncoder, never()).encode(any());
     }
 }
